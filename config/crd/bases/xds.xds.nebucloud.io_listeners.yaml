@@ -39,13 +39,121 @@ spec:
           spec:
             description: ListenerSpec defines the desired state of Listener
             properties:
-              foo:
-                description: Foo is an example field of Listener. Edit listener_types.go
-                  to remove/update
+              address:
+                description: Address is the address the listener should bind to (e.g.,
+                  0.0.0.0 for all interfaces)
                 type: string
+              name:
+                description: Name is the unique identifier for this listener in the
+                  xDS API
+                type: string
+              port:
+                description: Port is the port the listener should bind to
+                format: int32
+                type: integer
+              routes:
+                description: Routes configurations attached to this listener
+                items:
+                  description: Route defines a route configuration for a listener
+                  properties:
+                    match:
+                      description: Match defines criteria for matching requests to
+                        this route
+                      properties:
+                        path:
+                          description: Exact path to match
+                          type: string
+                        prefix:
+                          description: Prefix path to match (e.g., /api/)
+                          type: string
+                        regex:
+                          description: Regular expression to match path
+                          type: string
+                      type: object
+                    name:
+                      description: Name is a unique name for this route
+                      type: string
+                    route:
+                      description: Route defines the action to take when a match occurs
+                      properties:
+                        cluster:
+                          description: Cluster is the target cluster for this route
+                          type: string
+                        timeout:
+                          description: Timeout for the route request
+                          type: string
+                      required:
+                      - cluster
+                      type: object
+                  required:
+                  - match
+                  - name
+                  - route
+                  type: object
+                type: array
+              tls:
+                description: TLS configuration for the listener
+                properties:
+                  certificateRef:
+                    description: CertificateRef references a Kubernetes secret containing
+                      TLS certificates
+                    properties:
+                      name:
+                        description: Name is the name of the secret
+                        type: string
+                      namespace:
+                        description: Namespace is the namespace of the secret
+                        type: string
+                    required:
+                    - name
+                    type: object
+                  mode:
+                    description: Mode specifies the TLS mode (DISABLED, SIMPLE, MUTUAL)
+                    type: string
+                required:
+                - mode
+                type: object
+            required:
+            - name
+            - port
             type: object
           status:
             description: ListenerStatus defines the observed state of Listener
+            properties:
+              conditions:
+                description: Conditions represent the latest available observations
+                  of the Listener's state
+                items:
+                  description: ListenerCondition represents a condition of the Listener
+                    resource
+                  properties:
+                    lastTransitionTime:
+                      description: LastTransitionTime is the last time the condition
+                        transitioned from one status to another
+                      format: date-time
+                      type: string
+                    message:
+                      description: Message associated with the condition
+                      type: string
+                    reason:
+                      description: Reason for the condition's last transition
+                      type: string
+                    status:
+                      description: Status of the condition, one of True, False, Unknown
+                      type: boolean
+                    type:
+                      description: Type of the condition
+                      type: string
+                  required:
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                description: ObservedGeneration is the most recent generation observed
+                  for this Listener
+                format: int64
+                type: integer
             type: object
         type: object
     served: true
