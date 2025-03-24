@@ -1,32 +1,23 @@
----
+# permissions for end users to view listeners.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: manager-role
+  labels:
+    app.kubernetes.io/name: nebucloud-xds-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: listener-viewer-role
 rules:
 - apiGroups:
   - xds.xds.nebucloud.io
   resources:
   - listeners
   verbs:
-  - create
-  - delete
   - get
   - list
-  - patch
-  - update
   - watch
-- apiGroups:
-  - xds.xds.nebucloud.io
-  resources:
-  - listeners/finalizers
-  verbs:
-  - update
 - apiGroups:
   - xds.xds.nebucloud.io
   resources:
   - listeners/status
   verbs:
   - get
-  - patch
-  - update
